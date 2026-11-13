@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7f4ed" />
+  <title>framie — Lưu lại những khoảnh khắc</title>
+  <meta name="description" content="Album photobooth xinh xắn để lưu giữ những khoảnh khắc đáng nhớ của bạn." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #f7f4ed;
+      --paper-2: #fffdf8;
+      --ink: #263a36;
+      --muted: #7c837b;
+      --line: #e5e1d7;
+      --rose: #efb9b8;
+      --rose-dark: #d98e91;
+      --green: #c8d8bd;
+      --yellow: #f2d98f;
+      --lavender: #d6cbea;
+      --blue: #c5dce3;
+      --shadow: 0 18px 45px rgba(49, 55, 45, .10);
+      --radius: 22px;
+      --font-main: "Be Vietnam Pro", "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--ink); background: var(--paper); font-family: var(--font-main); }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #8aa58c; outline-offset: 3px; }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    .announcement { background: var(--ink); color: #fffaf1; text-align: center; font-size: 11px; letter-spacing: .12em; padding: 10px 16px; text-transform: uppercase; }
+    .announcement span { color: var(--yellow); }
+    .site-header { position: sticky; top: 0; z-index: 30; backdrop-filter: blur(14px); background: rgba(247,244,237,.92); border-bottom: 1px solid rgba(229,225,215,.8); }
+    .header-inner { max-width: 1240px; margin: 0 auto; padding: 17px 28px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 22px; }
+    .brand { display: inline-flex; align-items: center; gap: 9px; width: max-content; font-weight: 850; font-size: 25px; letter-spacing: -.08em; }
+    .brand-mark { width: 28px; height: 28px; display: grid; place-items: center; background: var(--rose); border-radius: 9px; transform: rotate(-7deg); font-size: 15px; letter-spacing: 0; }
+    .nav { display: flex; align-items: center; gap: 27px; color: #525d55; font-size: 13px; }
+    .nav a { transition: color .2s; white-space: nowrap; }
+    .nav a:hover { color: var(--rose-dark); }
+    .header-actions { justify-self: end; display: flex; align-items: center; gap: 9px; }
+    .icon-btn { position: relative; border: 1px solid transparent; background: transparent; color: var(--ink); width: 41px; height: 41px; display: grid; place-items: center; border-radius: 50%; font-size: 19px; transition: .2s; }
+    .icon-btn:hover { background: #eeeadf; }
+    .cart-count { position: absolute; right: -1px; top: -1px; background: var(--rose-dark); color: white; border-radius: 50%; min-width: 17px; height: 17px; font-size: 10px; display: grid; place-items: center; padding: 0 4px; font-weight: 700; }
+    .menu-toggle { display: none; }
+    .container { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
+    .hero { padding: 54px 0 46px; }
+    .hero-grid { display: grid; grid-template-columns: 1.02fr .98fr; align-items: center; gap: 50px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #718274; font-weight: 750; }
+    .eyebrow:before { content: ''; width: 24px; height: 1px; background: #a7b49c; }
+    h1 { font-family: var(--font-main); font-weight: 700; letter-spacing: -.02em; font-size: clamp(40px, 5.4vw, 70px); line-height: 1.02; margin: 22px 0 22px; max-width: 590px; text-wrap: balance; }
+    h1 em { font-weight: 500; color: #d58f91; }
+    .hero-copy { max-width: 450px; font-size: 15px; line-height: 1.8; color: #71796f; margin: 0 0 27px; }
+    .button-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid var(--ink); background: var(--ink); color: white; border-radius: 999px; padding: 14px 22px; min-height: 48px; font-size: 12px; font-weight: 750; transition: transform .2s, box-shadow .2s, background .2s; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 16px #263a3620; }
+    .btn.secondary { background: transparent; color: var(--ink); border-color: #d6d6ca; }
+    .btn.secondary:hover { background: #eeeadf; box-shadow: none; }
+    .btn.small { min-height: 38px; padding: 10px 15px; font-size: 11px; }
+    .hero-note { display: flex; align-items: center; gap: 12px; margin-top: 30px; font-size: 11px; color: #80867d; }
+    .avatar-stack { display: flex; align-items: center; }
+    .avatar-stack img { width: 27px; height: 27px; object-fit: cover; border-radius: 50%; border: 2px solid var(--paper); margin-left: -7px; }
+    .avatar-stack img:first-child { margin-left: 0; }
+    .hero-art { min-height: 440px; position: relative; display: grid; place-items: center; }
+    .art-blob { position: absolute; width: min(420px, 95%); aspect-ratio: 1; border-radius: 48% 52% 60% 40% / 43% 40% 60% 57%; background: #e7d9c7; transform: rotate(-11deg); }
+    .album { position: absolute; width: 242px; height: 315px; border-radius: 10px 18px 18px 10px; background: #d7b6a3; box-shadow: 13px 22px 30px #66533b2a; transform: rotate(9deg) translate(29px, 4px); padding: 15px; border-left: 8px solid #bd9b86; }
+    .album-cover { width: 100%; height: 100%; border-radius: 5px 10px 10px 5px; background: #f5e8d4; padding: 13px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+    .album-cover-label { text-align: center; font: italic 18px var(--font-main); color: #665c4b; padding-top: 2px; }
+    .cover-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; flex: 1; }
+    .cover-photos img { width: 100%; height: 100%; min-height: 0; border: 4px solid #fffaf3; object-fit: cover; box-shadow: 0 3px 7px #5b50441c; }
+    .cover-photos img:first-child { grid-row: span 2; }
+    .photostrip { position: absolute; width: 104px; background: #fffdf8; padding: 8px 8px 13px; box-shadow: 0 15px 25px #61564b28; display: flex; flex-direction: column; gap: 5px; }
+    .photostrip img { width: 100%; height: 70px; object-fit: cover; }
+    .strip-one { left: 4%; top: 53px; transform: rotate(-12deg); }
+    .strip-two { right: 2%; bottom: 26px; transform: rotate(12deg); }
+    .sticker { position: absolute; z-index: 2; border-radius: 50%; display: grid; place-items: center; text-align: center; font-family: var(--font-main); font-style: italic; box-shadow: 0 8px 18px #42382b14; }
+    .sticker.pink { width: 80px; height: 80px; left: 9%; bottom: 47px; background: var(--rose); transform: rotate(-12deg); font-size: 16px; }
+    .sticker.yellow { width: 58px; height: 58px; right: 12%; top: 25px; background: var(--yellow); transform: rotate(11deg); font-size: 12px; }
+    .floating-heart { position: absolute; left: 22%; top: 20px; color: #d88d91; font-size: 32px; transform: rotate(-15deg); }
+    .trust-bar { margin-top: 12px; padding: 21px 28px; background: #eeeadf; border-radius: 14px; display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
+    .trust-item { display: flex; align-items: center; justify-content: center; gap: 11px; font-size: 11px; font-weight: 700; color: #5d685f; }
+    .trust-icon { width: 31px; height: 31px; border-radius: 50%; background: #fbf9f2; display: grid; place-items: center; font-size: 15px; }
+    .section { padding: 86px 0 28px; }
+    .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 28px; }
+    .section-heading h2 { font-family: var(--font-main); font-size: clamp(31px, 3.8vw, 43px); font-weight: 500; letter-spacing: -.015em; margin: 11px 0 0; }
+    .section-heading p { color: var(--muted); max-width: 400px; line-height: 1.65; font-size: 13px; margin: 8px 0 0; }
+    .text-link { font-size: 12px; font-weight: 750; border-bottom: 1px solid #8c9c8d; padding-bottom: 4px; white-space: nowrap; }
+    .category-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 15px; }
+    .category-card { min-height: 155px; position: relative; border-radius: 17px; overflow: hidden; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #ffffff70; transition: transform .2s; }
+    .category-card:hover { transform: translateY(-4px); }
+    .category-card:nth-child(1) { background: #e8cbc7; }
+    .category-card:nth-child(2) { background: #d4ddca; }
+    .category-card:nth-child(3) { background: #e7dcb6; }
+    .category-card:nth-child(4) { background: #d9d1e8; }
+    .category-card h3 { font-family: var(--font-main); font-weight: 500; font-size: 23px; letter-spacing: -.015em; margin: 0; position: relative; z-index: 2; }
+    .category-card p { font-size: 11px; margin: 5px 0 0; opacity: .72; position: relative; z-index: 2; }
+    .category-arrow { background: #fffaf3a8; width: 31px; height: 31px; border-radius: 50%; display: grid; place-items: center; position: relative; z-index: 2; }
+    .category-deco { position: absolute; right: -1px; bottom: -18px; width: 100px; height: 123px; border: 7px solid #fff8ed; border-radius: 7px; background-size: cover; background-position: center; transform: rotate(-11deg); box-shadow: 0 7px 18px #493d2d2a; }
+    .category-deco:after { content: '♥'; position: absolute; right: 5px; bottom: 5px; color: #d99091; font-size: 15px; }
+    .category-card:nth-child(2) .category-deco { transform: rotate(8deg); bottom: -22px; }
+    .category-card:nth-child(3) .category-deco { transform: rotate(-5deg); width: 88px; }
+    .category-card:nth-child(4) .category-deco { transform: rotate(10deg); }
+    .shop-section { padding-top: 84px; }
+    .shop-toolbar { display: flex; justify-content: space-between; gap: 18px; align-items: center; flex-wrap: wrap; margin: 25px 0 22px; }
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-chip { border: 1px solid #ddd9ce; border-radius: 999px; padding: 9px 15px; background: transparent; color: #72796f; font-size: 11px; font-weight: 650; transition: .2s; }
+    .filter-chip.active, .filter-chip:hover { background: var(--ink); border-color: var(--ink); color: #fff; }
+    .sort-select { border: 1px solid #ddd9ce; background: var(--paper-2); border-radius: 999px; padding: 10px 34px 10px 14px; color: #5b665e; font-size: 11px; }
+    .product-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px 16px; }
+    .product-card { min-width: 0; }
+    .product-visual { height: 265px; position: relative; overflow: hidden; border-radius: 15px; display: grid; place-items: center; background: var(--tone, #ead4c9); isolation: isolate; }
+    .product-visual:before { content: ''; position: absolute; width: 180px; height: 180px; right: -54px; top: -57px; border-radius: 50%; border: 1px solid #ffffff70; }
+    .product-visual:after { content: ''; position: absolute; width: 155px; height: 155px; left: -70px; bottom: -83px; border-radius: 50%; border: 1px solid #ffffff8c; }
+    .product-art { position: relative; z-index: 1; width: 170px; height: 220px; border-radius: 8px 13px 13px 8px; padding: 10px; background: var(--cover, #f3e5d3); box-shadow: 8px 13px 20px #4a403024; transform: rotate(-5deg); transition: transform .35s; border-left: 5px solid #00000012; }
+    .product-card:hover .product-art { transform: rotate(0deg) translateY(-4px); }
+    .product-art .art-inner { height: 100%; border: 1px solid #0000000e; border-radius: 3px 8px 8px 3px; padding: 9px; display: flex; flex-direction: column; gap: 8px; }
+    .art-label { font: italic 15px var(--font-main); text-align: center; margin-top: 2px; color: #665b4b; }
+    .art-photos { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 5px; min-height: 0; }
+    .art-photos img { width: 100%; height: 100%; object-fit: cover; border: 3px solid #fffaf2; box-shadow: 0 2px 3px #40362919; }
+    .art-photos img:first-child { grid-row: span 2; }
+    .product-card:nth-child(even) .product-art { transform: rotate(5deg); }
+    .product-card:nth-child(even):hover .product-art { transform: rotate(0) translateY(-4px); }
+    .product-card:nth-child(3n) .product-art { width: 178px; height: 210px; border-radius: 5px; }
+    .product-badge { position: absolute; top: 12px; left: 12px; z-index: 3; font-size: 9px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; background: #fffaf2d9; padding: 7px 9px; border-radius: 999px; }
+    .favorite-btn { position: absolute; top: 10px; right: 10px; z-index: 4; height: 35px; width: 35px; border: 0; border-radius: 50%; background: #fffaf2e8; color: #46564a; font-size: 18px; display: grid; place-items: center; transition: .2s; }
+    .favorite-btn:hover, .favorite-btn.selected { color: #d57880; background: #fff; }
+    .quick-add { position: absolute; z-index: 4; left: 12px; right: 12px; bottom: 12px; border: 0; background: #fffaf2ef; border-radius: 999px; min-height: 39px; color: var(--ink); font-size: 11px; font-weight: 750; transform: translateY(55px); opacity: 0; transition: .25s; }
+    .product-card:hover .quick-add, .product-card:focus-within .quick-add { transform: translateY(0); opacity: 1; }
+    .product-info { padding: 14px 2px 0; }
+    .product-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #81867d; font-size: 10px; margin-bottom: 6px; }
+    .rating { color: #a9854c; }
+    .product-name-row { display: flex; align-items: start; justify-content: space-between; gap: 8px; }
+    .product-name { font-size: 13px; font-weight: 750; margin: 0; line-height: 1.4; }
+    .product-price { font-size: 12px; font-weight: 800; white-space: nowrap; }
+    .product-sub { font-size: 10px; color: #83877e; margin-top: 6px; }
+    .empty-state { padding: 45px 20px; text-align: center; border: 1px dashed #d8d3c8; border-radius: 18px; color: #777e74; grid-column: 1/-1; }
+    .empty-state strong { color: var(--ink); display: block; margin-bottom: 7px; }
+    .story { padding: 94px 0 70px; }
+    .story-panel { background: #d8e0d1; border-radius: 22px; display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; min-height: 355px; }
+    .story-image { min-height: 355px; position: relative; background: #c8d7bd; overflow: hidden; }
+    .story-image img { width: 100%; height: 100%; min-height: 355px; object-fit: cover; mix-blend-mode: multiply; opacity: .83; }
+    .story-sticker { position: absolute; right: 28px; bottom: 25px; background: var(--yellow); width: 88px; height: 88px; display: grid; place-items: center; border-radius: 50%; text-align: center; font: italic 17px var(--font-main); transform: rotate(11deg); }
+    .story-copy { padding: 48px clamp(28px, 5vw, 65px); display: flex; flex-direction: column; align-items: start; justify-content: center; }
+    .story-copy h2 { font: 500 clamp(31px, 3.5vw, 43px)/1.06 var(--font-main); letter-spacing: -.015em; margin: 16px 0; }
+    .story-copy p { font-size: 13px; line-height: 1.8; color: #5d6b5d; margin: 0 0 22px; max-width: 390px; }
+    .reviews-section { padding: 40px 0 90px; }
+    .review-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+    .review-card { background: #fffdf7; padding: 25px; border-radius: 16px; border: 1px solid #efebe2; }
+    .review-stars { color: #c3995b; font-size: 12px; letter-spacing: .1em; }
+    .review-card blockquote { font: 18px/1.45 var(--font-main); letter-spacing: -.02em; margin: 15px 0 21px; }
+    .review-person { display: flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 750; }
+    .review-person img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
+    .review-person small { display: block; color: #858a82; font-size: 10px; font-weight: 500; margin-top: 3px; }
+    .newsletter { background: #e7d4d0; padding: 48px 25px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; gap: 25px; margin-bottom: 80px; }
+    .newsletter h2 { font: 500 32px/1.05 var(--font-main); margin: 0 0 8px; letter-spacing: -.015em; }
+    .newsletter p { font-size: 12px; color: #6b6b62; margin: 0; }
+    .newsletter-form { display: flex; width: min(410px, 100%); gap: 7px; }
+    .newsletter-form input { width: 100%; min-width: 0; border: 1px solid #d1b8b2; background: #fffaf6; padding: 13px 15px; border-radius: 999px; font-size: 12px; color: var(--ink); }
+    .newsletter-form button { border: 0; border-radius: 999px; background: var(--ink); color: white; padding: 0 18px; white-space: nowrap; font-size: 11px; font-weight: 750; }
+    footer { background: #eae6dc; padding: 45px 0 25px; }
+    .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 35px; padding-bottom: 35px; }
+    .footer-about p { max-width: 250px; color: #72796f; font-size: 12px; line-height: 1.8; }
+    .footer-col h4 { margin: 4px 0 15px; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+    .footer-col a { display: block; color: #72796f; font-size: 11px; margin: 11px 0; }
+    .footer-col a:hover { color: var(--ink); }
+    .footer-bottom { border-top: 1px solid #d9d5ca; padding-top: 20px; display: flex; justify-content: space-between; gap: 15px; color: #8a8e84; font-size: 10px; }
+    .footer-social { display: flex; gap: 15px; }
+    /* Modal and drawers */
+    .overlay { position: fixed; inset: 0; z-index: 80; background: #1a2926a3; opacity: 0; visibility: hidden; transition: .22s; }
+    .overlay.open { opacity: 1; visibility: visible; }
+    .drawer { position: fixed; z-index: 90; top: 0; bottom: 0; right: 0; width: min(460px, 100%); background: var(--paper-2); transform: translateX(102%); transition: transform .28s ease; display: flex; flex-direction: column; box-shadow: -15px 0 40px #1c2b2518; }
+    .drawer.open { transform: translateX(0); }
+    .drawer-header { padding: 25px 25px 20px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+    .drawer-header h2 { margin: 0; font: 500 28px var(--font-main); }
+    .close-btn { border: 0; background: #efebe2; border-radius: 50%; width: 35px; height: 35px; font-size: 20px; color: var(--ink); }
+    .drawer-body { padding: 20px 25px; overflow-y: auto; flex: 1; }
+    .drawer-footer { padding: 20px 25px 25px; border-top: 1px solid var(--line); }
+    .cart-item { display: grid; grid-template-columns: 78px 1fr auto; gap: 13px; padding: 13px 0; border-bottom: 1px solid #eee9df; }
+    .cart-thumb { background: var(--tone, #ead4c9); border-radius: 9px; display: grid; place-items: center; overflow: hidden; height: 92px; }
+    .cart-thumb .mini-cover { width: 45px; height: 66px; padding: 4px; background: var(--cover, #f4e4d3); transform: rotate(-5deg); box-shadow: 2px 4px 7px #3d322323; }
+    .mini-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .cart-item h3 { margin: 4px 0 6px; font-size: 12px; }
+    .cart-item .variant { color: #85887e; font-size: 10px; }
+    .cart-item-price { font-size: 11px; font-weight: 800; white-space: nowrap; }
+    .quantity-control { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+    .quantity-control button { border: 1px solid #ded9ce; background: transparent; width: 24px; height: 24px; border-radius: 50%; font-size: 14px; }
+    .quantity-control span { font-size: 11px; min-width: 8px; text-align: center; }
+    .remove-link { border: 0; background: none; font-size: 10px; text-decoration: underline; color: #99978c; padding: 0; }
+    .cart-summary-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 10px; }
+    .cart-summary-row.total { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 14px; font-size: 15px; font-weight: 800; }
+    .cart-note { font-size: 10px; color: #8b8e83; line-height: 1.6; margin: 13px 0 0; }
+    .full-btn { width: 100%; }
+    .empty-cart { text-align: center; padding: 60px 10px; color: #7b8277; }
+    .empty-cart .empty-icon { font-size: 37px; margin-bottom: 13px; }
+    .empty-cart h3 { font: 24px var(--font-main); color: var(--ink); margin: 0 0 9px; }
+    .modal-wrap { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 22px; opacity: 0; visibility: hidden; transition: .2s; background: #1a2926a3; }
+    .modal-wrap.open { opacity: 1; visibility: visible; }
+    .modal { position: relative; width: min(750px, 100%); max-height: min(90vh, 850px); overflow-y: auto; background: var(--paper-2); border-radius: 20px; box-shadow: var(--shadow); transform: translateY(10px); transition: .2s; }
+    .modal-wrap.open .modal { transform: translateY(0); }
+    .modal-close { position: absolute; z-index: 3; right: 15px; top: 15px; border: 0; width: 35px; height: 35px; border-radius: 50%; background: #fffaf0e8; font-size: 20px; }
+    .product-detail { display: grid; grid-template-columns: .95fr 1.05fr; }
+    .detail-visual { min-height: 450px; background: var(--tone, #ead4c9); display: grid; place-items: center; padding: 30px; }
+    .detail-visual .product-art { width: 200px; height: 270px; transform: rotate(-5deg); }
+    .detail-copy { padding: 55px 35px 35px; }
+    .detail-copy h2 { font: 500 34px/1.08 var(--font-main); letter-spacing: -.015em; margin: 13px 0; }
+    .detail-price { font-size: 18px; font-weight: 800; margin-bottom: 18px; }
+    .detail-desc { font-size: 12px; color: #777d73; line-height: 1.8; }
+    .detail-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+    .spec { background: #f1eee6; border-radius: 9px; padding: 11px; }
+    .spec span { display: block; text-transform: uppercase; color: #8b8e83; font-size: 9px; letter-spacing: .07em; margin-bottom: 5px; }
+    .spec strong { font-size: 11px; }
+    .detail-actions { display: flex; gap: 9px; margin-top: 19px; }
+    .checkout-modal { width: min(590px, 100%); }
+    .checkout-content { padding: 32px; }
+    .checkout-content h2 { margin: 0 0 8px; font: 500 31px var(--font-main); }
+    .checkout-content > p { color: #777d73; font-size: 12px; line-height: 1.7; margin: 0 0 24px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+    .form-field.full { grid-column: 1/-1; }
+    .form-field label { font-size: 10px; color: #667066; font-weight: 750; }
+    .form-field input, .form-field textarea, .form-field select { width: 100%; background: #fffdf8; border: 1px solid #ded9ce; border-radius: 9px; padding: 12px; font-size: 12px; color: var(--ink); }
+    .form-field textarea { min-height: 68px; resize: vertical; }
+    .payment-options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .payment-option { display: flex; align-items: center; gap: 8px; border: 1px solid #ded9ce; border-radius: 10px; padding: 12px; font-size: 11px; cursor: pointer; }
+    .payment-option:has(input:checked) { border-color: #809681; background: #eff2e9; }
+    .success-state { text-align: center; padding: 46px 30px; }
+    .success-symbol { width: 62px; height: 62px; background: #d6e3ce; border-radius: 50%; display: grid; place-items: center; font-size: 27px; margin: 0 auto 18px; }
+    .success-state h2 { font: 500 32px var(--font-main); margin: 0 0 12px; }
+    .success-state p { max-width: 390px; margin: 0 auto 24px; color: #737b70; font-size: 12px; line-height: 1.7; }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 20px); z-index: 150; background: var(--ink); color: #fffdf5; padding: 13px 19px; border-radius: 999px; font-size: 12px; box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: .25s; max-width: calc(100% - 30px); text-align: center; }
+    .toast.show { transform: translate(-50%, 0); opacity: 1; }
+    .mobile-search { display: none; }
+    @media (max-width: 980px) {
+      .header-inner { grid-template-columns: 1fr auto; }
+      .nav { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--paper-2); padding: 18px 25px 23px; flex-direction: column; align-items: start; gap: 18px; border-bottom: 1px solid var(--line); }
+      .nav.open { display: flex; }
+      .menu-toggle { display: grid; }
+      .hero-grid { gap: 15px; }
+      .hero-art { transform: scale(.92); }
+      .product-grid { grid-template-columns: repeat(3,1fr); }
+      .product-visual { height: 250px; }
+      .category-grid { grid-template-columns: repeat(2,1fr); }
+      .story-panel { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 680px) {
+      .announcement { font-size: 9px; letter-spacing: .06em; }
+      .header-inner { padding: 13px 18px; gap: 10px; }
+      .brand { font-size: 23px; }
+      .header-actions { gap: 1px; }
+      .icon-btn { width: 36px; height: 36px; font-size: 17px; }
+      .container { width: min(100% - 34px, 520px); }
+      .hero { padding: 35px 0 24px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 0; }
+      .hero-copy { font-size: 13px; }
+      h1 { font-size: clamp(39px, 9.5vw, 55px); max-width: 100%; line-height: 1.04; letter-spacing: -.02em; }
+      .hero-art { min-height: 360px; margin: -7px -5px 0; transform: scale(.84); transform-origin: top center; width: calc(100% + 10px); margin-bottom: -50px; }
+      .album { width: 210px; height: 270px; }
+      .trust-bar { grid-template-columns: 1fr 1fr; gap: 17px 8px; padding: 19px 12px; }
+      .trust-item { justify-content: start; font-size: 10px; }
+      .trust-icon { flex-shrink: 0; }
+      .section { padding-top: 62px; }
+      .section-heading { align-items: start; flex-direction: column; margin-bottom: 23px; }
+      .section-heading h2 { font-size: 35px; }
+      .section-heading .text-link { margin-top: 2px; }
+      .category-grid { gap: 10px; }
+      .category-card { min-height: 145px; padding: 15px; }
+      .category-card h3 { font-size: 20px; }
+      .category-deco { width: 76px; height: 96px; right: -4px; bottom: -12px; border-width: 5px; }
+      .shop-toolbar { align-items: start; margin-top: 19px; }
+      .filters { gap: 7px; }
+      .filter-chip { padding: 9px 12px; }
+      .sort-select { width: 100%; }
+      .product-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 22px 11px; }
+      .product-visual { height: 215px; border-radius: 12px; }
+      .product-art { width: 135px; height: 175px; padding: 7px; }
+      .product-art .art-inner { padding: 6px; gap: 5px; }
+      .art-label { font-size: 12px; }
+      .art-photos { gap: 3px; }
+      .art-photos img { border-width: 2px; }
+      .product-card:nth-child(3n) .product-art { width: 142px; height: 169px; }
+      .product-badge { left: 8px; top: 8px; font-size: 8px; padding: 6px 7px; }
+      .favorite-btn { width: 30px; height: 30px; top: 7px; right: 7px; font-size: 16px; }
+      .quick-add { left: 7px; right: 7px; bottom: 7px; font-size: 10px; min-height: 34px; transform: translateY(0); opacity: 1; }
+      .product-info { padding-top: 11px; }
+      .product-name { font-size: 12px; }
+      .product-price { font-size: 11px; }
+      .product-meta { font-size: 9px; }
+      .product-sub { font-size: 9px; }
+      .story { padding: 70px 0 50px; }
+      .story-panel { grid-template-columns: 1fr; }
+      .story-image, .story-image img { min-height: 230px; height: 230px; }
+      .story-copy { padding: 31px 25px 33px; }
+      .story-copy h2 { font-size: 34px; }
+      .review-grid { grid-template-columns: 1fr; }
+      .review-card { padding: 22px; }
+      .newsletter { flex-direction: column; align-items: start; padding: 30px 22px; margin-bottom: 56px; }
+      .newsletter h2 { font-size: 29px; }
+      .newsletter-form { width: 100%; }
+      .newsletter-form button { padding: 0 13px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+      .footer-about { grid-column: 1/-1; }
+      .footer-bottom { flex-direction: column; }
+      .product-detail { grid-template-columns: 1fr; }
+      .detail-visual { min-height: 290px; padding: 22px; }
+      .detail-visual .product-art { width: 150px; height: 200px; }
+      .detail-copy { padding: 27px 23px 25px; }
+      .detail-copy h2 { font-size: 29px; }
+      .checkout-content { padding: 27px 20px; }
+      .form-grid { grid-template-columns: 1fr; gap: 0; }
+      .form-field.full { grid-column: auto; }
+    }
+    @media (hover: none) { .quick-add { transform: translateY(0); opacity: 1; } }
+  </style>
+</head>
+<body>
+  <div class="announcement"><span>Student project – E-Business, Hanoi University</span> · ĐƠN TỪ 399K <span>MIỄN PHÍ VẬN CHUYỂN</span> · TEST MODE ONLY</div>
+  <header class="site-header">
+    <div class="header-inner">
+      <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Mở menu">☰</button>
+      <a class="brand" href="#home" aria-label="framie trang chủ"><span class="brand-mark">f.</span> framie</a>
+      <nav class="nav" id="mainNav" aria-label="Điều hướng chính">
+        <a href="#shop">Cửa hàng</a><a href="#categories">Bộ sưu tập</a><a href="#story">Câu chuyện</a><a href="#reviews">Góc yêu thương</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-btn" id="searchToggle" aria-label="Tìm kiếm">⌕</button>
+        <button class="icon-btn" id="wishlistToggle" aria-label="Sản phẩm yêu thích">♡<span class="cart-count" id="wishCount" hidden>0</span></button>
+        <button class="icon-btn" id="cartToggle" aria-label="Mở giỏ hàng"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l1 12H5L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span class="cart-count" id="cartCount">0</span></button>
+      </div>
+    <div class="mobile-search" id="mobileSearch" style="padding:0 18px 14px;"><input id="mobileSearchInput" type="search" placeholder="Tìm album, màu sắc, dịp đặc biệt…" style="width:100%;border:1px solid var(--line);border-radius:999px;padding:12px 16px;background:var(--paper-2);font-size:12px;"></div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <span class="eyebrow">Little things, big memories</span>
+            <h1>Khoảnh khắc nhỏ,<br><em>thương nhớ lớn.</em></h1>
+            <p class="hero-copy">Một chiếc album xinh để cất giữ những tấm photobooth, những lần đi chơi bất chợt và những người bạn luôn muốn ở cạnh.</p>
+            <div class="button-row"><a class="btn" href="#shop">Tìm album của bạn <span>↗</span></a><a class="btn secondary" href="#categories">Khám phá bộ sưu tập</a></div>
+            <div class="hero-note"><div class="avatar-stack"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80" alt="Khách hàng"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&q=80" alt="Khách hàng"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=80&q=80" alt="Khách hàng"></div><span><strong style="color:var(--ink)">Concept Store</strong> · Chế độ thử nghiệm (không bán thật)</span></div>
+          </div>
+          <div class="hero-art" aria-label="Album và ảnh photobooth">
+            <div class="art-blob"></div>
+            <div class="floating-heart">♡</div><div class="sticker yellow">made with<br>love</div><div class="sticker pink">for your<br>memories</div>
+            <div class="album"><div class="album-cover"><div class="album-cover-label">our little days</div><div class="cover-photos"><img src="https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=280&q=85" alt="Khoảnh khắc cùng bạn bè"><img src="https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fit=crop&w=220&q=85" alt="Bạn bè"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=220&q=85" alt="Chân dung"></div></div></div>
+            <div class="photostrip strip-one"><img src="https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=180&q=80" alt="Ảnh photobooth 1"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=180&q=80" alt="Ảnh photobooth 2"><img src="https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fit=crop&w=180&q=80" alt="Ảnh photobooth 3"></div>
+            <div class="photostrip strip-two"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=180&q=80" alt="Ảnh photobooth 4"><img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=180&q=80" alt="Ảnh photobooth 5"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=180&q=80" alt="Ảnh photobooth 6"></div>
+          </div>
+        </div>
+        <div class="trust-bar">
+          <div class="trust-item"><span class="trust-icon">✿</span> Thiết kế độc quyền</div><div class="trust-item"><span class="trust-icon">♡</span> Chất liệu chọn lọc</div><div class="trust-item"><span class="trust-icon">✉</span> Gói quà xinh xắn</div><div class="trust-item"><span class="trust-icon">↺</span> Đổi trả trong 7 ngày</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="categories"><div class="container">
+      <div class="section-heading"><div><span class="eyebrow">Find your feeling</span><h2>Album cho mọi câu chuyện</h2><p>Mỗi chiếc album là một cách rất riêng để lưu giữ người thương, chuyến đi và cả những ngày bình thường.</p></div><a class="text-link" href="#shop">Xem tất cả sản phẩm ↗</a></div>
+      <div class="category-grid">
+        <a class="category-card" href="#shop" data-category-link="mini"><div><h3>Mini album</h3><p>Nhỏ xinh, mang theo mỗi ngày</p></div><span class="category-arrow">↗</span><div class="category-deco" style="background-image:url('https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=220&q=75')"></div></a>
+        <a class="category-card" href="#shop" data-category-link="scrapbook"><div><h3>Scrapbook</h3><p>Thêm sticker, viết lời thương</p></div><span class="category-arrow">↗</span><div class="category-deco" style="background-image:url('https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fit=crop&w=220&q=75')"></div></a>
+        <a class="category-card" href="#shop" data-category-link="photostrip"><div><h3>Photo strip</h3><p>Cất gọn từng dải ảnh</p></div><span class="category-arrow">↗</span><div class="category-deco" style="background-image:url('https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=220&q=75')"></div></a>
+        <a class="category-card" href="#shop" data-category-link="gift"><div><h3>Gift set</h3><p>Món quà đầy kỷ niệm</p></div><span class="category-arrow">↗</span><div class="category-deco" style="background-image:url('https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=220&q=75')"></div></a>
+      </div>
+    </div></section>
+
+    <section class="section shop-section" id="shop"><div class="container">
+      <div class="section-heading"><div><span class="eyebrow">Made to keep</span><h2>Những chiếc album được yêu thích</h2><p>Tìm chiếc album hợp với câu chuyện của bạn — từ tối giản, vintage đến những bộ quà tặng đầy bất ngờ.</p></div><span class="text-link" id="resultCount">08 sản phẩm</span></div>
+      <div class="shop-toolbar"><div class="filters" id="filters"><button class="filter-chip active" data-filter="all">Tất cả</button><button class="filter-chip" data-filter="mini">Mini album</button><button class="filter-chip" data-filter="scrapbook">Scrapbook</button><button class="filter-chip" data-filter="photostrip">Photo strip</button><button class="filter-chip" data-filter="gift">Gift set</button></div><select class="sort-select" id="sortSelect" aria-label="Sắp xếp sản phẩm"><option value="featured">Sắp xếp: Nổi bật</option><option value="price-asc">Giá: Thấp đến cao</option><option value="price-desc">Giá: Cao đến thấp</option><option value="name">Tên sản phẩm A–Z</option></select></div>
+      <div class="product-grid" id="productGrid" aria-live="polite"></div>
+    </div></section>
+
+    <section class="story" id="story"><div class="container"><div class="story-panel">
+      <div class="story-image"><img src="https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=900&q=85" alt="Những người bạn lưu giữ khoảnh khắc bên nhau"><div class="story-sticker">a little<br>forever ♡</div></div>
+      <div class="story-copy"><span class="eyebrow">Our little philosophy</span><h2>Ảnh nằm trong máy.<br>Kỷ niệm nằm trong tay.</h2><p>Chúng mình tin những tấm ảnh bé xíu có thể giữ lại điều rất lớn. framie làm album thủ công với những chi tiết vừa đủ — để mỗi lần mở ra, bạn lại nhớ mình đã vui thế nào.</p><a href="#reviews" class="btn">Nghe chuyện từ khách hàng ↗</a></div>
+    </div></div></section>
+
+    <section class="reviews-section" id="reviews"><div class="container">
+      <div class="section-heading"><div><span class="eyebrow">Concept Showcase</span><h2>Gợi ý cách dùng từ framie</h2><p>Một số tình huống sử dụng mẫu cho sản phẩm concept (chưa mở bán chính thức).</p></div></div>
+      <div class="review-grid">
+        <article class="review-card"><div class="review-stars">✿✿✿✿✿</div><blockquote>“Phù hợp để lưu ảnh đi chơi cùng hội bạn thân, dễ chọn màu bìa pastel theo sở thích.”</blockquote><div class="review-person"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=90&q=80" alt="Minh họa 1"><div>Gợi ý #1<small>Dành cho Mini Bloom Album</small></div></div></article>
+        <article class="review-card"><div class="review-stars">✿✿✿✿✿</div><blockquote>“Thích hợp làm quà kỷ niệm cho các cặp đôi kèm sticker và thiệp viết tay.”</blockquote><div class="review-person"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=90&q=80" alt="Minh họa 2"><div>Gợi ý #2<small>Dành cho Our Days Gift Set</small></div></div></article>
+        <article class="review-card"><div class="review-stars">✿✿✿✿✿</div><blockquote>“Túi đựng photo strip thiết kế vừa khít dải ảnh photobooth, giữ ảnh phẳng và sạch.”</blockquote><div class="review-person"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=90&q=80" alt="Minh họa 3"><div>Gợi ý #3<small>Dành cho Pocket Strip Book</small></div></div></article>
+      </div>
+    </div></section>
+
+    <section class="container"><div class="newsletter"><div><h2>Dự án thử nghiệm · Test Mode ♡</h2><p>Student project – E-Business, Hanoi University. Website không thu thập email hay số điện thoại thật của người trải nghiệm.</p></div><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#shop">Trải nghiệm đặt thử ↗</a><button class="btn secondary" type="button" data-info="privacy">Xem chính sách bảo mật</button></div></div></section>
+  </main>
+
+  <footer><div class="container"><div class="footer-grid">
+    <div class="footer-about"><a class="brand" href="#home"><span class="brand-mark">f.</span> framie</a><p>Album và phụ kiện nhỏ xinh dành cho những khoảnh khắc bạn muốn giữ bên mình thật lâu.</p><div style="font-size:12px;letter-spacing:.08em">Instagram&nbsp; ↗ &nbsp; TikTok&nbsp; ↗</div></div>
+    <div class="footer-col"><h4>Mua sắm</h4><a href="#shop">Tất cả sản phẩm</a><a href="#categories">Bộ sưu tập</a><a href="#shop" data-category-link="gift">Quà tặng</a><a href="#shop">Sản phẩm mới</a></div>
+    <div class="footer-col"><h4>Chính sách &amp; Hỗ trợ</h4><a href="#footer-help" data-info="shipping">Chính sách vận chuyển</a><a href="#footer-help" data-info="returns">Chính sách đổi trả</a><a href="#footer-help" data-info="privacy">Chính sách bảo mật</a><a href="#footer-help" data-info="care">Bảo quản album</a></div>
+    <div class="footer-col"><h4>Về framie</h4><a href="#story">Câu chuyện của tụi mình</a><a href="#reviews">Gợi ý sử dụng</a><a href="#shop">Trải nghiệm thử</a></div>
+  </div><div class="footer-bottom"><span>© 2026 framie studio · Student project – E-Business, Hanoi University.</span><span>Test Mode Only · Không bán hàng thật · Không thu thập dữ liệu cá nhân</span></div></div></footer>
+
+  <div class="overlay" id="overlay"></div>
+  <aside class="drawer" id="cartDrawer" aria-label="Giỏ hàng" aria-modal="true" role="dialog"><div class="drawer-header"><h2>Túi của bạn <span style="font:12px var(--font-main);color:#899085" id="cartHeaderCount">(0)</span></h2><button class="close-btn" id="closeCart" aria-label="Đóng giỏ hàng">×</button></div><div class="drawer-body" id="cartBody"></div><div class="drawer-footer" id="cartFooter"></div></aside>
+  <aside class="drawer" id="wishDrawer" aria-label="Sản phẩm yêu thích" aria-modal="true" role="dialog"><div class="drawer-header"><h2>Điều bạn thích ♡</h2><button class="close-btn" id="closeWish" aria-label="Đóng danh sách yêu thích">×</button></div><div class="drawer-body" id="wishBody"></div><div class="drawer-footer"><button class="btn full-btn" id="continueFromWish">Tiếp tục khám phá ↗</button></div></aside>
+
+  <div class="modal-wrap" id="productModal" role="dialog" aria-modal="true" aria-label="Chi tiết sản phẩm"><div class="modal" id="productModalContent"><button class="modal-close" data-close-modal aria-label="Đóng">×</button><div id="productDetailMount"></div></div></div>
+  <div class="modal-wrap" id="checkoutModal" role="dialog" aria-modal="true" aria-label="Thanh toán"><div class="modal checkout-modal"><button class="modal-close" data-close-modal aria-label="Đóng">×</button><div id="checkoutMount"></div></div></div>
+  <div class="modal-wrap" id="infoModal" role="dialog" aria-modal="true" aria-label="Thông tin"><div class="modal checkout-modal"><button class="modal-close" data-close-modal aria-label="Đóng">×</button><div id="infoMount" class="checkout-content"></div></div></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const photoSets = [
+      ['photo-1529636798458-92182e662485','photo-1511988617509-a57c8a288659','photo-1524504388940-b1c1722653e1'],
+      ['photo-1529333166437-7750a6dd5a70','photo-1517841905240-472988babdf9','photo-1529139574466-a303027c1d8b'],
+      ['photo-1524504388940-b1c1722653e1','photo-1511988617509-a57c8a288659','photo-1534528741775-53994a69daeb'],
+      ['photo-1529636798458-92182e662485','photo-1529139574466-a303027c1d8b','photo-1529333166437-7750a6dd5a70'],
+      ['photo-1517841905240-472988babdf9','photo-1524504388940-b1c1722653e1','photo-1511988617509-a57c8a288659'],
+      ['photo-1529333166437-7750a6dd5a70','photo-1529636798458-92182e662485','photo-1534528741775-53994a69daeb'],
+      ['photo-1529139574466-a303027c1d8b','photo-1517841905240-472988babdf9','photo-1524504388940-b1c1722653e1'],
+      ['photo-1511988617509-a57c8a288659','photo-1529333166437-7750a6dd5a70','photo-1529636798458-92182e662485']
+    ];
+    const products = [
+      {id:1,name:'Mini Bloom Album',category:'mini',categoryName:'Mini album',price:189000,oldPrice:219000,tone:'#e9c9c1',cover:'#f5e8d4',badge:'Bán chạy',rating:'4.9',count:128,sub:'40 ảnh · 4 màu pastel',desc:'Chiếc album nhỏ xinh dành cho những lần đi chơi đáng nhớ. Bìa cứng bọc giấy mỹ thuật, vừa vặn với những tấm photobooth cỡ mini.',size:'10 × 14 cm',capacity:'40–60 ảnh',material:'Bìa cứng · giấy mỹ thuật',photos:photoSets[0]},
+      {id:2,name:'Our Days Scrapbook',category:'scrapbook',categoryName:'Scrapbook',price:269000,oldPrice:null,tone:'#cbd8bf',cover:'#f1eedf',badge:'Được yêu thích',rating:'5.0',count:86,sub:'Kèm sticker & giấy note',desc:'Một cuốn scrapbook để tự tay kể câu chuyện của bạn. Có khoảng trống để viết vài dòng, dán vé xem phim hay những chiếc sticker yêu thích.',size:'18 × 20 cm',capacity:'80 trang',material:'Giấy 180gsm · bìa vải',photos:photoSets[1]},
+      {id:3,name:'Pocket Strip Book',category:'photostrip',categoryName:'Photo strip',price:99000,oldPrice:null,tone:'#f0dfaa',cover:'#fff2d6',badge:'Nhỏ gọn',rating:'4.8',count:64,sub:'Đựng 24 dải photostrip',desc:'Cuốn túi mini chuyên dành cho photo strip. Các ngăn trong suốt giúp bạn xem lại ảnh thật nhanh, đồng thời giữ ảnh sạch và phẳng.',size:'7 × 18 cm',capacity:'24 dải ảnh',material:'PVC trong · bìa mềm',photos:photoSets[2]},
+      {id:4,name:'Sunday Memory Set',category:'gift',categoryName:'Gift set',price:359000,oldPrice:399000,tone:'#d6cde5',cover:'#f4e9f0',badge:'Set quà tặng',rating:'4.9',count:47,sub:'Album + sticker + thiệp',desc:'Set quà tặng sẵn sàng trao đi với album, sticker trang trí và một tấm thiệp để viết lời nhắn. Phù hợp sinh nhật, kỷ niệm hoặc chẳng vì dịp gì cả.',size:'Hộp 22 × 24 cm',capacity:'Album 60 ảnh',material:'Giấy mỹ thuật · hộp kraft',photos:photoSets[3]},
+      {id:5,name:'Soft Focus Album',category:'mini',categoryName:'Mini album',price:199000,oldPrice:null,tone:'#d8dce8',cover:'#f0eee8',badge:'Mới',rating:'4.9',count:32,sub:'Bìa linen · 3 gam màu',desc:'Tối giản với bìa linen mềm và tông màu dịu mắt. Lựa chọn dành cho những bạn thích album tinh gọn, nhẹ nhàng và có thể mang đi khắp nơi.',size:'12 × 16 cm',capacity:'48 ảnh',material:'Bìa linen · giấy ảnh',photos:photoSets[4]},
+      {id:6,name:'Little Love Journal',category:'scrapbook',categoryName:'Scrapbook',price:239000,oldPrice:null,tone:'#e9c9c1',cover:'#edc9c2',badge:'Limited',rating:'4.8',count:54,sub:'Trang giấy kraft vintage',desc:'Album kết hợp nhật ký với giấy kraft, góc dán ảnh và khu vực viết chú thích. Một nơi dành cho những câu chuyện chỉ hai người hiểu.',size:'16 × 19 cm',capacity:'64 trang',material:'Giấy kraft · bìa kraft cứng',photos:photoSets[5]},
+      {id:7,name:'Film Days Pack',category:'photostrip',categoryName:'Photo strip',price:129000,oldPrice:149000,tone:'#c7dce2',cover:'#e7f1f0',badge:'Tiết kiệm 13%',rating:'4.7',count:39,sub:'Túi album + 3 khung ảnh',desc:'Bộ lưu trữ dành cho hội mê photobooth: một album strip gọn nhẹ và ba khung ảnh để trưng trên bàn học hay góc làm việc.',size:'7 × 18 cm',capacity:'20 dải ảnh',material:'PP trong suốt · giấy bìa',photos:photoSets[6]},
+      {id:8,name:'Our Days Gift Set',category:'gift',categoryName:'Gift set',price:429000,oldPrice:null,tone:'#d8d7bc',cover:'#f4eddc',badge:'Premium gift',rating:'5.0',count:28,sub:'Album lớn + túi quà + thiệp',desc:'Phiên bản quà tặng đầy đủ nhất với album bìa vải, túi quà, sticker và thiệp viết tay. Bạn chỉ cần chọn người nhận, phần còn lại để framie lo.',size:'Hộp 26 × 28 cm',capacity:'Album 100 ảnh',material:'Bìa vải · hộp cứng cao cấp',photos:photoSets[7]}
+    ];
+    const money = n => new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND',maximumFractionDigits:0}).format(n).replace('₫','đ');
+    const photoUrl = (id,w=240) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=78`;
+    const state = {filter:'all',query:'',sort:'featured',cart:[],wishlist:[],activeModal:null};
+    const $ = s => document.querySelector(s);
+    const $$ = s => [...document.querySelectorAll(s)];
+    let toastTimer;
+
+    // Give remote photos a graceful, locally generated fallback so failed requests never expose alt text or broken-image icons.
+    function makeOfflinePhoto(seedText = 'framie') {
+      const palettes = [
+        {bg:'#ead4c9', glow:'#f8e7d7', skin:'#e9b79c', hair:'#4e3835', shirt:'#829d83', accent:'#d58f91'},
+        {bg:'#d8e0d1', glow:'#f4eddd', skin:'#f0c6a8', hair:'#5a4439', shirt:'#d28f8b', accent:'#b6c7a8'},
+        {bg:'#d8d4e7', glow:'#f5e8dc', skin:'#c9896c', hair:'#302b31', shirt:'#8396b5', accent:'#d5aa83'},
+        {bg:'#f0dfaa', glow:'#fff5d9', skin:'#f0c9a6', hair:'#6a4834', shirt:'#d89ca0', accent:'#a5b9a0'},
+        {bg:'#c9dfe2', glow:'#f2e7dc', skin:'#b9785e', hair:'#332e2c', shirt:'#c3a6cf', accent:'#e2a8a4'},
+        {bg:'#e7c8c7', glow:'#fbebdf', skin:'#e3ad8f', hair:'#654239', shirt:'#8aa3a0', accent:'#e2c66c'}
+      ];
+      let hash = 0;
+      const seed = String(seedText || 'framie');
+      for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+      const a = palettes[hash % palettes.length];
+      const b = palettes[(hash + 3) % palettes.length];
+      const paired = hash % 3 !== 0;
+      const person = (x, y, scale, c, tilt = 0) => `<g transform="translate(${x} ${y}) rotate(${tilt}) scale(${scale})">
+        <path d="M-105 192 C-101 91 -65 28 0 26 C65 28 101 91 105 192 Z" fill="${c.shirt}"/>
+        <path d="M-23 5 L-27 42 L0 66 L27 42 L23 5 Z" fill="${c.skin}"/>
+        <ellipse cx="0" cy="-39" rx="59" ry="73" fill="${c.skin}"/>
+        <path d="M-59 -37 C-74 -99 -39 -121 3 -118 C48 -120 69 -86 58 -35 L46 -11 C43 -66 25 -83 1 -85 C-27 -86 -43 -63 -45 -12 Z" fill="${c.hair}"/>
+        <path d="M-49 -7 Q-39 3 -29 -6 M29 -6 Q39 3 49 -7" fill="none" stroke="${c.hair}" stroke-width="5" stroke-linecap="round"/>
+        <path d="M-17 -18 Q-9 -24 -2 -18 M13 -18 Q21 -24 28 -18" fill="none" stroke="#49362f" stroke-width="4" stroke-linecap="round"/>
+        <path d="M-10 10 Q0 20 12 9" fill="none" stroke="#9d5e58" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="-77" cy="-49" r="9" fill="${c.accent}"/><circle cx="78" cy="-54" r="7" fill="${c.accent}"/>
+      </g>`;
+      const people = paired ? person(142, 323, .75, a, -5) + person(270, 337, .69, b, 5) : person(204, 333, 1.0, a, (hash % 9) - 4);
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${a.bg}"/><stop offset="1" stop-color="${a.glow}"/></linearGradient><clipPath id="clip"><rect width="400" height="500" rx="16"/></clipPath></defs><g clip-path="url(#clip)"><rect width="400" height="500" fill="url(#bg)"/><ellipse cx="200" cy="220" rx="145" ry="178" fill="${a.glow}" opacity=".72"/><circle cx="74" cy="85" r="29" fill="${a.accent}" opacity=".5"/><circle cx="326" cy="128" r="17" fill="${b.shirt}" opacity=".55"/><path d="M0 408 Q100 365 200 410 T400 395 V500 H0Z" fill="${a.accent}" opacity=".22"/>${people}<path d="M320 65 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5Z" fill="#fff9ee" opacity=".9"/><path d="M73 285 l4 9 9 4 -9 4 -4 9 -4 -9 -9 -4 9 -4Z" fill="#fff9ee" opacity=".8"/><rect x="12" y="12" width="376" height="476" rx="11" fill="none" stroke="#fffaf2" stroke-opacity=".7" stroke-width="7"/></g></svg>`;
+      return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+    }
+    document.addEventListener('error', event => {
+      const img = event.target;
+      if (!img || img.tagName !== 'IMG' || img.dataset.offlineFallback) return;
+      img.dataset.offlineFallback = '1';
+      img.src = makeOfflinePhoto((img.alt || '') + ' ' + (img.getAttribute('src') || ''));
+    }, true);
+    // Some previews finish the initial failed requests before the listener is installed.
+    document.querySelectorAll('img').forEach(img => {
+      if (img.complete && img.naturalWidth === 0 && img.getAttribute('src') && !img.dataset.offlineFallback) img.dispatchEvent(new Event('error'));
+    });
+
+    function artMarkup(p, large=false) {
+      return `<div class="product-art" style="--cover:${p.cover}"><div class="art-inner"><div class="art-label">${p.name.includes('Love')?'little love':p.name.includes('Sunday')?'sunday notes':p.name.includes('Film')?'film days':p.name.includes('Bloom')?'bloom days':p.name.includes('Soft')?'soft focus':p.name.includes('Our')?'our little days':'tiny memories'}</div><div class="art-photos">${p.photos.map((id,i)=>`<img loading="lazy" src="${photoUrl(id,large?300:210)}" alt="Ảnh minh họa album ${p.name} ${i+1}">`).join('')}</div></div></div>`;
+    }
+    function productCard(p) {
+      const liked = state.wishlist.includes(p.id);
+      return `<article class="product-card" data-product="${p.id}"><div class="product-visual" style="--tone:${p.tone};--cover:${p.cover}">${p.badge?`<span class="product-badge">${p.badge}</span>`:''}<button class="favorite-btn ${liked?'selected':''}" data-favorite="${p.id}" aria-label="${liked?'Bỏ yêu thích':'Thêm yêu thích'} ${p.name}">${liked?'♥':'♡'}</button>${artMarkup(p)}<button class="quick-add" data-add="${p.id}">＋ Thêm vào giỏ</button></div><div class="product-info"><div class="product-meta"><span>${p.categoryName}</span><span class="rating">★ ${p.rating} <span style="color:#9b9b8e">(${p.count})</span></span></div><div class="product-name-row"><h3 class="product-name"><a href="#product-${p.id}" data-detail="${p.id}">${p.name}</a></h3><span class="product-price">${money(p.price)}</span></div><div class="product-sub">${p.sub}</div></div></article>`;
+    }
+    function filteredProducts() {
+      let list = products.filter(p => (state.filter==='all'||p.category===state.filter) && (p.name+' '+p.categoryName+' '+p.sub+' '+p.desc).toLowerCase().includes(state.query.toLowerCase()));
+      if(state.sort==='price-asc') list.sort((a,b)=>a.price-b.price);
+      if(state.sort==='price-desc') list.sort((a,b)=>b.price-a.price);
+      if(state.sort==='name') list.sort((a,b)=>a.name.localeCompare(b.name,'vi'));
+      return list;
+    }
+    function renderProducts() {
+      const list = filteredProducts();
+      $('#productGrid').innerHTML = list.length ? list.map(productCard).join('') : `<div class="empty-state"><strong>Chưa tìm thấy album phù hợp</strong>Thử đổi từ khóa hoặc chọn bộ lọc khác nhé.<br><button class="btn secondary small" style="margin-top:15px" data-reset-filters>Đặt lại bộ lọc</button></div>`;
+      $('#resultCount').textContent = `${String(list.length).padStart(2,'0')} sản phẩm`;
+      $$('#filters [data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.filter));
+    }
+    function toast(message) {
+      const el=$('#toast'); el.textContent=message; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2600);
+    }
+    function updateCounts() {
+      const count=state.cart.reduce((n,item)=>n+item.qty,0);
+      $('#cartCount').textContent=count; $('#cartHeaderCount').textContent=`(${count})`;
+      $('#wishCount').textContent=state.wishlist.length; $('#wishCount').hidden=!state.wishlist.length;
+    }
+    function addToCart(id, qty=1) {
+      const item=state.cart.find(x=>x.id===id);
+      if(item) item.qty+=qty; else state.cart.push({id,qty});
+      updateCounts(); renderCart(); const p=products.find(x=>x.id===id); toast(`${p.name} đã được thêm vào túi ♡`);
+    }
+    function toggleFavorite(id) {
+      if(state.wishlist.includes(id)) { state.wishlist=state.wishlist.filter(x=>x!==id); toast('Đã bỏ khỏi danh sách yêu thích.'); }
+      else { state.wishlist.push(id); toast('Đã lưu vào danh sách yêu thích ♡'); }
+      updateCounts(); renderProducts(); renderWishlist();
+    }
+    function cartTotal() { return state.cart.reduce((n,item)=>n+products.find(p=>p.id===item.id).price*item.qty,0); }
+    function cartItemMarkup(item) {
+      const p=products.find(x=>x.id===item.id);
+      return `<div class="cart-item"><div class="cart-thumb" style="--tone:${p.tone};--cover:${p.cover}"><div class="mini-cover"><img src="${photoUrl(p.photos[0],100)}" alt=""></div></div><div><h3>${p.name}</h3><div class="variant">${p.categoryName}</div><div class="quantity-control"><button data-qty="${p.id}" data-delta="-1" aria-label="Giảm số lượng">−</button><span>${item.qty}</span><button data-qty="${p.id}" data-delta="1" aria-label="Tăng số lượng">＋</button><button class="remove-link" data-remove="${p.id}">Xóa</button></div></div><div class="cart-item-price">${money(p.price*item.qty)}</div></div>`;
+    }
+    function renderCart() {
+      const body=$('#cartBody'), footer=$('#cartFooter');
+      if(!state.cart.length) {
+        body.innerHTML=`<div class="empty-cart"><div class="empty-icon">♡</div><h3>Túi đang chờ điều dễ thương</h3><p>Thêm một chiếc album để bắt đầu lưu giữ kỷ niệm.</p><button class="btn small" id="emptyShopBtn">Khám phá album ↗</button></div>`;
+        footer.innerHTML=`<p class="cart-note">Miễn phí vận chuyển cho đơn từ 399.000đ.</p>`; return;
+      }
+      body.innerHTML=state.cart.map(cartItemMarkup).join('');
+      const subtotal=cartTotal(), shipping=subtotal>=399000?0:25000, total=subtotal+shipping;
+      footer.innerHTML=`<div class="cart-summary-row"><span>Tạm tính</span><strong>${money(subtotal)}</strong></div><div class="cart-summary-row"><span>Phí vận chuyển</span><strong>${shipping?money(shipping):'<span style="color:#758d70">Miễn phí</span>'}</strong></div><div class="cart-summary-row total"><span>Tổng cộng</span><span>${money(total)}</span></div><button class="btn full-btn" id="checkoutButton">Tiến hành thanh toán ↗</button><p class="cart-note">${subtotal>=399000?'Bạn đã được miễn phí vận chuyển ♡':`Mua thêm ${money(399000-subtotal)} để được miễn phí vận chuyển.`} Thanh toán sẽ được mô phỏng trong bản demo.</p>`;
+    }
+    function renderWishlist() {
+      const body=$('#wishBody');
+      const liked=state.wishlist.map(id=>products.find(p=>p.id===id));
+      if(!liked.length) { body.innerHTML=`<div class="empty-cart"><div class="empty-icon">♡</div><h3>Chưa có gì ở đây</h3><p>Chạm vào biểu tượng trái tim ở sản phẩm bạn thích nhé.</p><button class="btn small" id="wishShopBtn">Đi xem album ↗</button></div>`; return; }
+      body.innerHTML=liked.map(p=>`<div class="cart-item"><div class="cart-thumb" style="--tone:${p.tone};--cover:${p.cover}"><div class="mini-cover"><img src="${photoUrl(p.photos[0],100)}" alt=""></div></div><div><h3>${p.name}</h3><div class="variant">${p.categoryName}</div><div class="quantity-control"><button class="btn small" data-add="${p.id}">Thêm vào giỏ</button></div></div><div><div class="cart-item-price">${money(p.price)}</div><button class="remove-link" data-favorite="${p.id}" style="margin-top:12px">Bỏ lưu</button></div></div>`).join('');
+    }
+    function openDrawer(which) {
+      closeDrawers(); $('#overlay').classList.add('open');
+      const drawer=which==='cart'?$('#cartDrawer'):$('#wishDrawer'); drawer.classList.add('open'); state.activeModal=which;
+      document.body.style.overflow='hidden';
+    }
+    function closeDrawers() { $$('.drawer').forEach(d=>d.classList.remove('open')); if(!$('.modal-wrap.open')) { $('#overlay').classList.remove('open'); document.body.style.overflow=''; } state.activeModal=null; }
+    function openModal(id) { closeDrawers(); $('#overlay').classList.remove('open'); const modal=$(id); modal.classList.add('open'); state.activeModal=id; document.body.style.overflow='hidden'; }
+    function closeModals() { $$('.modal-wrap').forEach(m=>m.classList.remove('open')); document.body.style.overflow=''; state.activeModal=null; }
+    function detailMarkup(p) {
+      return `<div class="product-detail"><div class="detail-visual" style="--tone:${p.tone};--cover:${p.cover}">${artMarkup(p,true)}</div><div class="detail-copy"><span class="eyebrow">${p.categoryName}</span><h2>${p.name}</h2><div class="detail-price">${money(p.price)} ${p.oldPrice?`<del style="font-size:12px;color:#999;font-weight:500;margin-left:6px">${money(p.oldPrice)}</del>`:''}</div><div class="review-stars">★★★★★ <span style="font-size:11px;color:#85887d;letter-spacing:0">${p.rating} · ${p.count} đánh giá</span></div><p class="detail-desc">${p.desc}</p><div class="detail-specs"><div class="spec"><span>Kích thước</span><strong>${p.size}</strong></div><div class="spec"><span>Sức chứa</span><strong>${p.capacity}</strong></div><div class="spec" style="grid-column:1/-1"><span>Chất liệu</span><strong>${p.material}</strong></div></div><div class="detail-actions"><button class="btn" data-add-detail="${p.id}" style="flex:1">Thêm vào giỏ · ${money(p.price)}</button><button class="btn secondary" data-favorite="${p.id}" aria-label="Yêu thích">${state.wishlist.includes(p.id)?'♥':'♡'}</button></div><p class="cart-note">♡ Gói quà miễn phí · Giao hàng dự kiến 2–4 ngày làm việc.</p></div></div>`;
+    }
+    function openProduct(id) { const p=products.find(x=>x.id===Number(id)); if(!p)return; $('#productDetailMount').innerHTML=detailMarkup(p); openModal('#productModal'); }
+    function openCheckout() {
+      if(!state.cart.length) { toast('Giỏ hàng của bạn đang trống.'); return; }
+      const subtotal=cartTotal(), shipping=subtotal>=399000?0:25000;
+      $('#checkoutMount').innerHTML=`<div class="checkout-content"><span class="eyebrow">Test Mode Only · Student project – E-Business, Hanoi University</span><h2>Đặt hàng thử nghiệm (Demo)</h2><p>Đây là chế độ mô phỏng, <strong>không phát sinh giao dịch thật</strong>. Vui lòng <strong>không nhập số điện thoại hoặc email thật</strong>.</p><form id="checkoutForm"><div class="form-grid"><div class="form-field"><label for="fullName">Mã người test / Tên mẫu *</label><input id="fullName" name="fullName" required value="Tester Demo (T1)" placeholder="Ví dụ: Tester T1"></div><div class="form-field"><label for="city">Tỉnh / Thành phố *</label><select id="city" required><option value="Hà Nội" selected>Hà Nội</option><option>Hồ Chí Minh</option><option>Đà Nẵng</option><option>Cần Thơ</option><option>Hải Phòng</option><option>Tỉnh / thành khác</option></select></div><div class="form-field full"><label for="address">Địa chỉ nhận hàng mẫu *</label><input id="address" name="address" required value="Km9 Nguyễn Trãi, Thanh Xuân (Thông tin mẫu)" placeholder="Nhập địa chỉ mẫu…"></div><div class="form-field full"><label for="note">Ghi chú thử nghiệm (không bắt buộc)</label><textarea id="note" placeholder="Ghi chú đóng gói, lời nhắn tặng quà…"></textarea></div></div><div class="form-field"><label>Phương thức thanh toán (Chế độ Test Mode)</label><div class="payment-options"><label class="payment-option"><input type="radio" name="payment" value="cod" checked> Mô phỏng COD (0đ thanh toán thật)</label><label class="payment-option"><input type="radio" name="payment" value="bank"> Mô phỏng chuyển khoản (0đ thanh toán thật)</label></div></div><div style="background:#f0ede5;border-radius:12px;padding:15px;margin:20px 0"><div class="cart-summary-row"><span>Tạm tính (${state.cart.reduce((n,i)=>n+i.qty,0)} sản phẩm)</span><strong>${money(subtotal)}</strong></div><div class="cart-summary-row"><span>Vận chuyển</span><strong>${shipping?money(shipping):'Miễn phí'}</strong></div><div class="cart-summary-row total" style="margin-bottom:0"><span>Tổng thanh toán (Test)</span><strong>${money(subtotal+shipping)}</strong></div></div><button class="btn full-btn" type="submit">Xác nhận đặt hàng thử · ${money(subtotal+shipping)} ↗</button><p class="cart-note">Student project – E-Business, Hanoi University. Không có dữ liệu cá nhân thật nào được lưu trữ.</p></form></div>`;
+      closeDrawers(); openModal('#checkoutModal');
+    }
+    function showInfo(type) {
+      const content={shipping:['Chính sách vận chuyển','Phí giao hàng tiêu chuẩn là 25.000đ và miễn phí cho đơn từ 399.000đ. Đơn hàng được xử lý trong 1–2 ngày làm việc; thời gian giao dự kiến 2–4 ngày tại thành phố lớn và 3–6 ngày với các khu vực khác. (Hiện tại website chạy ở chế độ Test Mode, không giao hàng thật.)'],returns:['Chính sách đổi trả','Bạn có thể yêu cầu hỗ trợ đổi trả miễn phí trong vòng 7 ngày kể từ khi nhận hàng nếu sản phẩm bị lỗi sản xuất, rách túi ảnh hoặc hư hỏng khi vận chuyển.'],privacy:['Chính sách bảo mật','Đây là dự án học tập: Student project – E-Business, Hanoi University. Website chạy hoàn toàn ở chế độ thử nghiệm (Test Mode), không thu thập số điện thoại thật, email thật hay thông tin thanh toán của người dùng thử. Mọi phản hồi được ghi nhận bằng mã ẩn danh (T1, T2…).'],care:['Bảo quản album','Để album ở nơi khô ráo, tránh ánh nắng trực tiếp và nguồn nhiệt. Nên dùng tay khô khi lật trang; với ảnh photobooth, tránh để bề mặt ảnh tiếp xúc lâu với băng dính hoặc mực ướt.']}[type];
+      $('#infoMount').innerHTML=`<span class="eyebrow">framie care</span><h2 style="font:500 31px var(--font-main);margin:14px 0">${content[0]}</h2><p style="font-size:13px;color:#747c72;line-height:1.85;margin-bottom:25px">${content[1]}</p><button class="btn" data-close-modal>Đã hiểu ♡</button>`; openModal('#infoModal');
+    }
+
+    $('#filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;state.filter=b.dataset.filter;renderProducts();});
+    $('#sortSelect').addEventListener('change',e=>{state.sort=e.target.value;renderProducts();});
+    function updateSearch(v) { state.query=v.trim(); $('#searchInput') && ($('#searchInput').value=v); $('#mobileSearchInput').value=v; renderProducts(); }
+    $('#searchToggle').addEventListener('click',()=>{if(window.innerWidth>680){const q=prompt('Bạn đang tìm album nào?');if(q!==null){updateSearch(q);$('#shop').scrollIntoView({behavior:'smooth'});}return;}const bar=$('#mobileSearch');bar.style.display=bar.style.display==='block'?'none':'block';if(bar.style.display==='block')$('#mobileSearchInput').focus();});
+    $('#mobileSearchInput').addEventListener('input',e=>{updateSearch(e.target.value);if(e.target.value.length===1)$('#shop').scrollIntoView({behavior:'smooth',block:'start'});});
+    $('#menuToggle').addEventListener('click',()=>$('#mainNav').classList.toggle('open'));
+    $('#mainNav').addEventListener('click',e=>{if(e.target.closest('a'))$('#mainNav').classList.remove('open');});
+    $('#cartToggle').addEventListener('click',()=>{renderCart();openDrawer('cart');});
+    $('#wishlistToggle').addEventListener('click',()=>{renderWishlist();openDrawer('wish');});
+    $('#closeCart').addEventListener('click',closeDrawers); $('#closeWish').addEventListener('click',closeDrawers); $('#overlay').addEventListener('click',closeDrawers);
+    $('#continueFromWish').addEventListener('click',closeDrawers);
+    document.addEventListener('click',e=>{
+      const add=e.target.closest('[data-add]'); if(add){e.preventDefault();addToCart(Number(add.dataset.add));return;}
+      const fav=e.target.closest('[data-favorite]'); if(fav){e.preventDefault();toggleFavorite(Number(fav.dataset.favorite));if($('#productModal').classList.contains('open')){const p=products.find(x=>x.id===Number(fav.dataset.favorite));$('#productDetailMount').innerHTML=detailMarkup(p);}return;}
+      const detail=e.target.closest('[data-detail]');if(detail){e.preventDefault();openProduct(detail.dataset.detail);return;}
+      const cat=e.target.closest('[data-category-link]');if(cat){e.preventDefault();state.filter=cat.dataset.categoryLink;renderProducts();$('#shop').scrollIntoView({behavior:'smooth'});$$('#mainNav a').forEach(a=>a.blur());return;}
+      const remove=e.target.closest('[data-remove]');if(remove){state.cart=state.cart.filter(i=>i.id!==Number(remove.dataset.remove));updateCounts();renderCart();return;}
+      const qty=e.target.closest('[data-qty]');if(qty){const item=state.cart.find(i=>i.id===Number(qty.dataset.qty));if(item){item.qty+=Number(qty.dataset.delta);if(item.qty<=0)state.cart=state.cart.filter(i=>i.id!==item.id);}updateCounts();renderCart();return;}
+      const detailAdd=e.target.closest('[data-add-detail]');if(detailAdd){addToCart(Number(detailAdd.dataset.addDetail));closeModals();renderCart();openDrawer('cart');return;}
+      const reset=e.target.closest('[data-reset-filters]');if(reset){state.filter='all';state.query='';$('#mobileSearchInput').value='';state.sort='featured';$('#sortSelect').value='featured';renderProducts();return;}
+      const close=e.target.closest('[data-close-modal]');if(close){closeModals();return;}
+      const checkout=e.target.closest('#checkoutButton');if(checkout){openCheckout();return;}
+      const emptyShop=e.target.closest('#emptyShopBtn, #wishShopBtn');if(emptyShop){closeDrawers();$('#shop').scrollIntoView({behavior:'smooth'});return;}
+      const info=e.target.closest('[data-info]');if(info){e.preventDefault();showInfo(info.dataset.info);return;}
+    });
+    $$('.modal-wrap').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModals();}));
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawers();closeModals();$('#mainNav').classList.remove('open');}});
+    document.addEventListener('submit',e=>{
+      if(e.target.id==='newsletterForm'){e.preventDefault();const email=$('#newsletterEmail').value.trim();if(!email)return;toast('Bạn đã đăng ký nhận tin thành công ♡');e.target.reset();}
+      if(e.target.id==='checkoutForm'){e.preventDefault();const data=new FormData(e.target);const name=String(data.get('fullName')||'bạn').trim();const payment=data.get('payment')==='bank'?'chuyển khoản ngân hàng':'thanh toán khi nhận hàng';const orderNo='FR'+Math.floor(100000+Math.random()*900000);state.cart=[];updateCounts();renderCart();$('#checkoutMount').innerHTML=`<div class="success-state"><div class="success-symbol">✓</div><h2>Đơn hàng đã được ghi nhận!</h2><p>Cảm ơn ${name}. Mã đơn demo của bạn là <strong>${orderNo}</strong>. Phương thức đã chọn: ${payment}. Đây chỉ là xác nhận mô phỏng, chưa có đơn hàng hay giao dịch thật nào được gửi đi.</p><button class="btn" id="finishCheckout">Tiếp tục mua sắm ↗</button></div>`;$('#checkoutMount').querySelector('#finishCheckout').addEventListener('click',()=>{closeModals();$('#shop').scrollIntoView({behavior:'smooth'});});}
+    });
+    // Close after the informational button is created dynamically.
+    renderProducts(); renderCart(); renderWishlist(); updateCounts();
+  </script>
+</body>
+</html>
